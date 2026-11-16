@@ -1,3 +1,10 @@
 #include "LexicalAnalyzer.hpp"
 
-void LexicalAnalyzer::TestBuild() {}
+//конечный автомат
+std::vector<Token> LexicalAnalyzer::analyze(const std::string& str) {
+    std::vector<Token> res;
+
+
+    
+    return res;
+}

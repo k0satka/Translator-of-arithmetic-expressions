@@ -1,11 +1,11 @@
 #include "LexicalAnalyzer.hpp"
+#include "Token.hpp"
 #include <iostream>
 
 int main() {
-    LexicalAnalyzer analyzer;
-    analyzer.TestBuild();
+    Token a{Type::NUMBER, "2"};
 
-    std::cout << "build rabotaet";
+    std::cout << a.lex;
     
     return 0;
 }
