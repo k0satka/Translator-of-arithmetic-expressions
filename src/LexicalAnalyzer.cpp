@@ -1,5 +1,6 @@
 #include "LexicalAnalyzer.hpp"
 
+namespace {
 //состояния КА
 enum class State { START, INT, DOT, RPART, size }; 
 
@@ -79,6 +80,8 @@ constexpr Cell table[static_cast<size_t>(State::size)][static_cast<size_t>(Symbo
         { State::START, Action::SEND_ERROR }, //invalid
     }
 };
+}
+
 
 //конечный автомат
 std::vector<Token> LexicalAnalyzer::analyze(const std::string& str) {
@@ -86,16 +89,18 @@ std::vector<Token> LexicalAnalyzer::analyze(const std::string& str) {
     std::vector<Token> res; //результат
     State state = State::START; //начальное состояние
     std::string lexem; //лексема для токена
+    SymbolClass sClass; //тип символа
+    
+    size_t len = str.size();
     size_t i = 0; //индекс читаемого символа
     char ch; //читаемый символ
-    SymbolClass sClass; //тип символа
-    size_t len = str.size();
 
     while (i <= len) {
         if (i < len) {
             ch = str[i];
             sClass = classify(ch);
         } else sClass = SymbolClass::END;
+
         Cell toDo = table[static_cast<size_t>(state)][static_cast<size_t>(sClass)];
         
         //выполняем действие

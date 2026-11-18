@@ -1,4 +1,7 @@
 #include "LexicalAnalyzer.hpp"
+#include "SyntaxAnalyzer.hpp"
+#include "PostfixConverter.hpp"
+#include "Evaluator.hpp"
 #include "Token.hpp"
 #include <iostream>
 
@@ -24,8 +27,15 @@ int main() {
     std::string str;
     std::getline(std::cin, str); //чтобы считать пробел
 
-    std::vector<Token> tokens = LexicalAnalyzer::analyze(str);
-
+    std::vector<Token> tokens;
+    try {
+        tokens = LexicalAnalyzer::analyze(str);
+        SyntaxAnalyzer::analyze(tokens);
+        //
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << '\n';
+    }
+    
     for (size_t i = 0; i < tokens.size(); i++) {
         std::cout << TypeToString(tokens[i].type) << ": " << tokens[i].lex << '\n';
     }
