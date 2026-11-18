@@ -1,4 +1,6 @@
 #include "SyntaxAnalyzer.hpp"
+#include <stack>
+#include <stdexcept>
 
 namespace {
 //состояния КА

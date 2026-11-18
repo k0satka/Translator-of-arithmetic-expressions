@@ -5,7 +5,7 @@ project(ArithmeticTranslator LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_library(translator_core STATIC src/LexicalAnalyzer.cpp src/SyntaxAnalyzer.cpp src/PostfixConverter.cpp src/Evaluator.cpp)
+add_library(translator_core STATIC src/LexicalAnalyzer.cpp src/SyntaxAnalyzer.cpp src/PostfixConverter.cpp src/Evaluator.cpp src/Translator.cpp)
 
 target_include_directories(translator_core PUBLIC ${PROJECT_SOURCE_DIR}/include)
 

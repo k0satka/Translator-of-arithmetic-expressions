@@ -1,53 +1,30 @@
-#include "LexicalAnalyzer.hpp"
-#include "SyntaxAnalyzer.hpp"
-#include "PostfixConverter.hpp"
-#include "Evaluator.hpp"
-#include "Token.hpp"
+#include "Translator.hpp"
 #include <iostream>
-
-std::string TypeToString(const Type& type){
-    std::string res;
-
-    switch (type) {
-    case Type::INT: res = "INT"; break;
-    case Type::DOUBLE: res = "DOUBLE"; break;
-    case Type::PLUS: res = "PLUS"; break;
-    case Type::MINUS: res = "MINUS"; break;
-    case Type::MULTIPLY: res = "MULTIPLY"; break;
-    case Type::DIVIDE: res = "DIVIDE"; break;
-    case Type::LEFTBRACKET: res = "LEFTBRACKET"; break;
-    case Type::RIGHTBRACKET: res = "RIGHTBRACKET"; break;
-    default: break;
-    }
-
-    return res;
-}
+#include <exception>
+#include <windows.h>
 
 int main() {
     std::string str;
-    std::getline(std::cin, str); //чтобы считать пробелы
 
-    //пайплайн
-    std::vector<Token> tokens;
-    try {
-        tokens = LexicalAnalyzer::analyze(str);
-        SyntaxAnalyzer::analyze(tokens);
-        tokens = PostfixConverter::convert(tokens);
-        //
-    } catch (const std::exception& e) {
-        std::cerr << e.what() << '\n';
+    std::cout << "Translator of arithmetic expressions.\n";
+    std::cout << "Type 'exit' to quit.\n\n";
+
+    while (true) {
+        std::cout << ">>> ";
+
+        if (!std::getline(std::cin, str)) break;
+
+        if (str == "exit") break;
+
+        if (str.empty()) continue;
+
+        try {
+            std::cout << Translator::translate(str) << '\n';
+        }
+        catch (const std::exception& e) {
+            std::cerr << e.what() << '\n';
+        }
     }
-    
-    //вывод промежуточных результатов
-    std::cout << '\n';
-    for (size_t i = 0; i < tokens.size(); i++) {
-        std::cout << TypeToString(tokens[i].type) << ": " << tokens[i].lex << '\n';
-    }
-    std::cout << '\n';
-    for (size_t i = 0; i < tokens.size(); i++) {
-        std::cout << tokens[i].lex << ' ';
-    }
-    std::cout << '\n';
 
     return 0;
 }

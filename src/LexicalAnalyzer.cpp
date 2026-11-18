@@ -1,4 +1,5 @@
 #include "LexicalAnalyzer.hpp"
+#include <stdexcept>
 
 namespace {
 //состояния КА
@@ -90,7 +91,7 @@ std::vector<Token> LexicalAnalyzer::analyze(const std::string& str) {
     State state = State::START; //начальное состояние
     std::string lexem; //лексема для токена
     SymbolClass sClass; //тип символа
-    
+
     size_t len = str.size();
     size_t i = 0; //индекс читаемого символа
     char ch; //читаемый символ

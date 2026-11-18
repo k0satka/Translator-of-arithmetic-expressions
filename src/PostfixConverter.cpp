@@ -1,4 +1,6 @@
 #include "PostfixConverter.hpp"
+#include <stack>
+#include <stdexcept>
 
 namespace {
 //классификация токенов
