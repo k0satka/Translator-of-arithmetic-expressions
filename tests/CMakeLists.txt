@@ -13,6 +13,7 @@ FetchContent_MakeAvailable(googletest)
 add_executable(translator_tests
     LexicalTests.cpp
     SyntaxTests.cpp
+    PostfixTests.cpp
 )
 
 target_link_libraries(translator_tests PRIVATE

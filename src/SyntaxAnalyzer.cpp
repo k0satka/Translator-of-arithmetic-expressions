@@ -4,7 +4,7 @@ namespace {
 //состояния КА
 enum class State { EXP_OPERAND, EXP_OPERATOR, size }; 
 
-//классификация символов
+//классификация токенов
 enum class TokenClass { NUMBER, OPERATOR, LEFTBRACKET, RIGHTBRACKET, END, size };
 TokenClass classify(const Token& a) {
     if (a.type == Type::INT || a.type == Type::DOUBLE) return TokenClass::NUMBER;

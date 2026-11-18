@@ -25,20 +25,29 @@ std::string TypeToString(const Type& type){
 
 int main() {
     std::string str;
-    std::getline(std::cin, str); //чтобы считать пробел
+    std::getline(std::cin, str); //чтобы считать пробелы
 
+    //пайплайн
     std::vector<Token> tokens;
     try {
         tokens = LexicalAnalyzer::analyze(str);
         SyntaxAnalyzer::analyze(tokens);
+        tokens = PostfixConverter::convert(tokens);
         //
     } catch (const std::exception& e) {
         std::cerr << e.what() << '\n';
     }
     
+    //вывод промежуточных результатов
+    std::cout << '\n';
     for (size_t i = 0; i < tokens.size(); i++) {
         std::cout << TypeToString(tokens[i].type) << ": " << tokens[i].lex << '\n';
     }
+    std::cout << '\n';
+    for (size_t i = 0; i < tokens.size(); i++) {
+        std::cout << tokens[i].lex << ' ';
+    }
+    std::cout << '\n';
 
     return 0;
 }
