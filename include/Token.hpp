@@ -1,7 +1,7 @@
 #pragma once
-#include <string>
 
-enum class Type { INT, DOUBLE, PLUS, MINUS, MULTIPLY, DIVIDE, LEFTBRACKET, RIGHTBRACKET };
+#include <string>
+#include "TokenType.hpp"
 
 struct Token {
     Type type;

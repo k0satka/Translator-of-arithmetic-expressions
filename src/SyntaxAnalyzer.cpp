@@ -6,16 +6,6 @@ namespace {
 //состояния КА
 enum class State { EXP_OPERAND, EXP_OPERATOR, size }; 
 
-//КЛАССИФИКАЦИЯ ТОКЕНОВ (токен -> группа), потому что смысл некоторых токенов для лекс. анализа одинаковый
-enum class TokenClass { NUMBER, OPERATOR, LEFTBRACKET, RIGHTBRACKET, END, size };
-TokenClass classify(const Token& a) {
-    if (a.type == Type::INT || a.type == Type::DOUBLE) return TokenClass::NUMBER;
-    else if (a.type == Type::PLUS || a.type == Type::MINUS || a.type == Type::MULTIPLY || a.type == Type::DIVIDE) return TokenClass::OPERATOR;
-    else if (a.type == Type::LEFTBRACKET) return TokenClass::LEFTBRACKET;
-    else if (a.type == Type::RIGHTBRACKET) return TokenClass::RIGHTBRACKET;
-    else throw std::invalid_argument("unknown type");
-}
-
 //возможные действия
 enum class Action { NONE, PUSH, POP, CHECK_STACK, SEND_ERROR, size };
 
@@ -52,7 +42,7 @@ void SyntaxAnalyzer::analyze(const std::vector<Token>& tokens) {
     size_t len = tokens.size();
 
     while (i <= len) {
-        tClass = i < len ? classify(tokens[i]) : TokenClass::END;
+        tClass = i < len ? classify(tokens[i].type) : TokenClass::END;
 
         Cell toDo = table[static_cast<size_t>(state)][static_cast<size_t>(tClass)];
 
