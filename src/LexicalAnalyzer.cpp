@@ -5,7 +5,7 @@ namespace {
 //состояния КА
 enum class State { START, INT, DOT, RPART, size }; 
 
-//классификация символов
+//КЛАССИФИКАЦИЯ СИМВОЛОВ (символ -> группа), потому что смысл некоторых символов для лекс. анализа одинаковый
 enum class SymbolClass { DIGIT, DOT, OPERATOR, LEFTBRACKET, RIGHTBRACKET, SPACE, END, INVALID, size };
 SymbolClass classify(char a) {
     if (a >= '0' && a <= '9') return SymbolClass::DIGIT;
@@ -30,7 +30,7 @@ Type getTokenType(char a){
     case ')': return Type::RIGHTBRACKET;
     default: throw std::invalid_argument("processed only +-*/()");
     }
-}
+}   
 
 struct Cell {
     State nextState;

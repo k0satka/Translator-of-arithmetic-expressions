@@ -1,7 +1,6 @@
 #include "Translator.hpp"
 #include <iostream>
 #include <exception>
-#include <windows.h>
 
 int main() {
     std::string str;

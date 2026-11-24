@@ -8,18 +8,16 @@ double Evaluator::evaluate(const std::vector<Token>& tokens) {
     size_t sz = tokens.size();
     for (size_t i = 0; i < sz; i++) {
         switch (tokens[i].type) {
-            case Type::INT: {
-                double a = std::stod(tokens[i].lex);
-                stack.push(a);
-                break;
-            }
-
+            case Type::INT:
             case Type::DOUBLE: {
                 double a = std::stod(tokens[i].lex);
                 stack.push(a);
                 break;
             }
 
+            case Type::PLUS:
+            case Type::MINUS:
+            case Type::MULTIPLY:
             case Type::DIVIDE: {
                 if (stack.size() < 2) throw std::runtime_error("evaluator error: there are not enough operands"); //в стеке не хватает операднов
 
@@ -28,51 +26,24 @@ double Evaluator::evaluate(const std::vector<Token>& tokens) {
                 double left = stack.top();
                 stack.pop();
 
-                if (right == 0.0) throw std::runtime_error("evaluator error: division by zero");
-                stack.push(left / right);
-
+                switch (tokens[i].type) {
+                    case Type::DIVIDE:
+                        if (right == 0.0) throw std::runtime_error("evaluator error: division by zero");
+                        stack.push(left / right);
+                        break;
+                    case Type::PLUS:
+                        stack.push(left + right);
+                        break;
+                    case Type::MINUS:
+                        stack.push(left - right);
+                        break;
+                    case Type::MULTIPLY:
+                        stack.push(left * right);
+                        break;
+                    default: throw std::runtime_error("evaluator error: incorrect token type");
+                }
                 break;
             }
-
-            case Type::PLUS: {
-                if (stack.size() < 2) throw std::runtime_error("evaluator error: there are not enough operands"); //в стеке не хватает операднов
-
-                double right = stack.top();
-                stack.pop();
-                double left = stack.top();
-                stack.pop();
-
-                stack.push(left + right);
-
-                break;
-            }
-
-            case Type::MINUS: {
-                if (stack.size() < 2) throw std::runtime_error("evaluator error: there are not enough operands"); //в стеке не хватает операднов
-
-                double right = stack.top();
-                stack.pop();
-                double left = stack.top();
-                stack.pop();
-
-                stack.push(left - right);
-
-                break;
-            }
-
-            case Type::MULTIPLY: {
-                if (stack.size() < 2) throw std::runtime_error("evaluator error: there are not enough operands"); //в стеке не хватает операднов
-
-                double right = stack.top();
-                stack.pop();
-                double left = stack.top();
-                stack.pop();
-
-                stack.push(left * right);
-
-                break;
-            }
-            
             default: throw std::runtime_error("evaluator error: incorrect token type");
         }
     }

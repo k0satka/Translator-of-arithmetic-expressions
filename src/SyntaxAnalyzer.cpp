@@ -6,7 +6,7 @@ namespace {
 //состояния КА
 enum class State { EXP_OPERAND, EXP_OPERATOR, size }; 
 
-//классификация токенов
+//КЛАССИФИКАЦИЯ ТОКЕНОВ (токен -> группа), потому что смысл некоторых токенов для лекс. анализа одинаковый
 enum class TokenClass { NUMBER, OPERATOR, LEFTBRACKET, RIGHTBRACKET, END, size };
 TokenClass classify(const Token& a) {
     if (a.type == Type::INT || a.type == Type::DOUBLE) return TokenClass::NUMBER;
@@ -24,7 +24,7 @@ struct Cell {
     Action action;
 };
 
-//таблица с правилами, где по состоянию и символу можно посмотреть следующее состояние и действие
+//таблица с правилами, где по состоянию и токену можно посмотреть следующее состояние и действие
 constexpr Cell table[static_cast<size_t>(State::size)][static_cast<size_t>(TokenClass::size)] = {
     /*EXP_OPERAND*/{
         {State::EXP_OPERATOR, Action::NONE}, //number
