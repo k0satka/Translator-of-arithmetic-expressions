@@ -151,16 +151,41 @@ TEST(PostfixConverterTests, OneOperand) {
     EXPECT_EQ(tokens[0].lex, "42");
 }
 
-TEST(PostfixConverterTests, OneOperand) { //дописать
+TEST(PostfixConverterTests, PowTest) {
     std::vector<Token> tokens = {
-        {Type::INT, "2"}
-        {Type::POW, "42"}
-        {Type::INT, "42"}
-        {Type::INT, "42"}
+        {Type::INT, "2"},
+        {Type::POW, "^"},
+        {Type::INT, "3"},
+        {Type::POW, "^"},
+        {Type::INT, "2"},
     };
 
     tokens = PostfixConverter::convert(tokens);
-    ASSERT_EQ(tokens.size(), 1);
+    ASSERT_EQ(tokens.size(), 5);
 
-    EXPECT_EQ(tokens[0].lex, "42");
+    EXPECT_EQ(tokens[0].lex, "2");
+    EXPECT_EQ(tokens[1].lex, "3");
+    EXPECT_EQ(tokens[2].lex, "2");
+    EXPECT_EQ(tokens[3].lex, "^");
+    EXPECT_EQ(tokens[4].lex, "^");
+}
+TEST(PostfixConverterTests, PowTest2) { //дописать
+    std::vector<Token> tokens = {
+        {Type::LEFTBRACKET, "("},
+        {Type::INT, "2"},
+        {Type::POW, "^"},
+        {Type::INT, "3"},
+        {Type::RIGHTBRACKET, ")"},
+        {Type::POW, "^"},
+        {Type::INT, "2"},
+    };
+
+    tokens = PostfixConverter::convert(tokens);
+    ASSERT_EQ(tokens.size(), 5);
+
+    EXPECT_EQ(tokens[0].lex, "2");
+    EXPECT_EQ(tokens[1].lex, "3");
+    EXPECT_EQ(tokens[2].lex, "^");
+    EXPECT_EQ(tokens[3].lex, "2");
+    EXPECT_EQ(tokens[4].lex, "^");
 }
