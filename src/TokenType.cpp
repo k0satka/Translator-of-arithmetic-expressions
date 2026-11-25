@@ -2,11 +2,12 @@
 
 namespace {
     //таблица с информацией
-    OperatorInfo table[OpCount] = { //priority, arity
-        /*PLUS*/ {1, 2},
-        /*MINUS*/ {1, 2},
-        /*MULTIPLY*/ {2, 2},
-        /*DIVIDE*/ {2, 2},
+    constexpr OperatorInfo table[OpCount] = { //priority, arity, asociativity
+        /*PLUS*/ {1, 2, Associativity::LEFT},
+        /*MINUS*/ {1, 2, Associativity::LEFT},
+        /*MULTIPLY*/ {2, 2, Associativity::LEFT},
+        /*DIVIDE*/ {2, 2, Associativity::LEFT},
+        /*POW*/ {3, 2, Associativity::RIGHT},
     };
 }
 
@@ -18,6 +19,7 @@ TokenClass classify(Type type) {
         case Type::PLUS:
         case Type::MINUS:
         case Type::MULTIPLY:
+        case Type::POW:
         case Type::DIVIDE: return TokenClass::OPERATOR;
 
         case Type::LEFTBRACKET: return TokenClass::LEFTBRACKET;

@@ -150,3 +150,17 @@ TEST(PostfixConverterTests, OneOperand) {
 
     EXPECT_EQ(tokens[0].lex, "42");
 }
+
+TEST(PostfixConverterTests, OneOperand) { //дописать
+    std::vector<Token> tokens = {
+        {Type::INT, "2"}
+        {Type::POW, "42"}
+        {Type::INT, "42"}
+        {Type::INT, "42"}
+    };
+
+    tokens = PostfixConverter::convert(tokens);
+    ASSERT_EQ(tokens.size(), 1);
+
+    EXPECT_EQ(tokens[0].lex, "42");
+}

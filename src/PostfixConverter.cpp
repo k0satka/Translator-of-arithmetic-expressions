@@ -3,13 +3,17 @@
 #include <stdexcept>
 
 namespace {
-//a >= b
-bool comparePriority(const Token& a, const Token& b){
-    if (a.type == Type::PLUS || a.type == Type::MINUS){
-        if (b.type == Type::PLUS || b.type == Type::MINUS) return true;
-        return false;
-    }
-    return true;
+//условие извлечения операторов из стека. Здесь влияет приоритет и ассоциативность
+bool shouldPopOperator(Type top, Type cur) {
+    if (top == Type::LEFTBRACKET) return false;
+
+    OperatorInfo topInf = getOperatorInfo(top);
+    OperatorInfo curInf = getOperatorInfo(cur);
+
+    if (topInf.priority > curInf.priority) return true;
+    if (topInf.priority == curInf.priority && curInf.associativity == Associativity::LEFT) return true;
+
+    return false;
 }
 }
 
@@ -34,13 +38,15 @@ std::vector<Token> PostfixConverter::convert(const std::vector<Token>& tokens) {
             }
             stack.pop();
             break;
+
         case TokenClass::OPERATOR:
-            while (!stack.empty() && stack.top().type != Type::LEFTBRACKET && comparePriority(stack.top(), tokens[i])) {
+            while (!stack.empty() && shouldPopOperator(stack.top().type, tokens[i].type)) {
                 res.push_back(stack.top());
                 stack.pop();
             }
             stack.push(tokens[i]);
             break;
+
         case TokenClass::END:
             while (!stack.empty()) {
                 if (stack.top().type == Type::LEFTBRACKET) throw std::runtime_error("extra opening bracket");
@@ -48,6 +54,7 @@ std::vector<Token> PostfixConverter::convert(const std::vector<Token>& tokens) {
                 stack.pop();
             }
             break;
+            
         default: break;
         }
     }

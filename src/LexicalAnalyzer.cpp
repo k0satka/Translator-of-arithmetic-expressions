@@ -10,7 +10,7 @@ enum class SymbolClass { DIGIT, DOT, OPERATOR, LEFTBRACKET, RIGHTBRACKET, SPACE,
 SymbolClass classify(char a) {
     if (a >= '0' && a <= '9') return SymbolClass::DIGIT;
     else if (a == '.') return SymbolClass::DOT;
-    else if (a == '+' || a == '-' || a == '*' || a == '/') return SymbolClass::OPERATOR;
+    else if (a == '+' || a == '-' || a == '*' || a == '/' || a == '^') return SymbolClass::OPERATOR;
     else if (a == '(') return SymbolClass::LEFTBRACKET;
     else if (a == ')') return SymbolClass::RIGHTBRACKET;
     else if (a == ' ' || a == '\n' || a == '\t') return SymbolClass::SPACE;
@@ -26,6 +26,7 @@ Type getTokenType(char a){
     case '-': return Type::MINUS;
     case '*': return Type::MULTIPLY;
     case '/': return Type::DIVIDE;
+    case '^': return Type::POW;
     case '(': return Type::LEFTBRACKET;
     case ')': return Type::RIGHTBRACKET;
     default: throw std::invalid_argument("processed only +-*/()");

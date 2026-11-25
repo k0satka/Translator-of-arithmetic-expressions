@@ -3,6 +3,7 @@
 #include <vector>
 #include <stack>
 #include <stdexcept>
+#include <cmath>
 #include "Token.hpp"
 
 class Evaluator{

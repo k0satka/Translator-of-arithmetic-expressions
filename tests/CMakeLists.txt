@@ -11,6 +11,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 add_executable(translator_tests
+    TokenTypeTests.cpp
     LexicalTests.cpp
     SyntaxTests.cpp
     PostfixTests.cpp
