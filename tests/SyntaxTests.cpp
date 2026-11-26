@@ -79,11 +79,15 @@ TEST(SyntaxAnalyzerTest, MissingRightBracket) {
 
 TEST(SyntaxAnalyzerTest, EmptyBrackets) {
     std::vector<Token> tokens = {
-        {Type::LEFTBRACKET, "("},
-        {Type::RIGHTBRACKET, ")"},
+        {Type::LEFTBRACKET, "(", 0},
+        {Type::RIGHTBRACKET, ")", 1},
     };
 
-    EXPECT_THROW(SyntaxAnalyzer::analyze(tokens), std::runtime_error);    
+    try {
+        SyntaxAnalyzer::analyze(tokens);
+    } catch (const SyntaxError& e) {
+        EXPECT_EQ(e.position(), 1);
+    }   
 }
 
 TEST(SyntaxAnalyzerTest, AdjacentNumbers) {
@@ -99,4 +103,79 @@ TEST(SyntaxAnalyzerTest, EmptyExpression) {
     std::vector<Token> tokens = { };
 
     EXPECT_THROW(SyntaxAnalyzer::analyze(tokens), std::runtime_error);  
+}
+
+TEST(SyntaxAnalyzerTest, ErrorPosTest1) {
+    std::vector<Token> tokens = { 
+        {Type::INT, "1", 0},
+        {Type::PLUS, "+", 1},
+        {Type::MULTIPLY, "*", 2},
+        {Type::DOUBLE, ".4", 3},
+    };
+
+    try {
+        SyntaxAnalyzer::analyze(tokens);
+    } catch (const SyntaxError& e) {
+        EXPECT_EQ(e.position(), 2);
+    }
+}
+
+TEST(SyntaxAnalyzerTest, ErrorPosTest2) {
+    std::vector<Token> tokens = { 
+        {Type::INT, "2", 0},
+        {Type::LEFTBRACKET, "(", 1},
+        {Type::INT, "3", 2},
+        {Type::PLUS, "+", 3},
+        {Type::DOUBLE, ".4", 4},
+        {Type::RIGHTBRACKET, ")", 5},
+    };
+
+    try {
+        SyntaxAnalyzer::analyze(tokens);
+    } catch (const SyntaxError& e) {
+        EXPECT_EQ(e.position(), 1);
+    }
+}
+
+TEST(SyntaxAnalyzerTest, ErrorPosTest3) {
+    std::vector<Token> tokens = { 
+        {Type::INT, "2", 0},
+        {Type::PLUS, "+", 1},
+        {Type::INT, "3", 2},
+        {Type::RIGHTBRACKET, ")", 3},
+    };
+
+    try {
+        SyntaxAnalyzer::analyze(tokens);
+    } catch (const SyntaxError& e) {
+        EXPECT_EQ(e.position(), 3);
+    }
+}
+
+TEST(SyntaxAnalyzerTest, ErrorPosTest4) {
+    std::vector<Token> tokens = { 
+        {Type::LEFTBRACKET, "(", 0},
+        {Type::INT, "2", 1},
+        {Type::PLUS, "+", 2},
+        {Type::INT, "3", 3},
+    };
+
+    try {
+        SyntaxAnalyzer::analyze(tokens);
+    } catch (const SyntaxError& e) {
+        EXPECT_EQ(e.position(), 0);
+    }
+}
+
+TEST(SyntaxAnalyzerTest, ErrorPosTest5) {
+    std::vector<Token> tokens = { 
+        {Type::INT, "1", 0},
+        {Type::PLUS, "+", 1},
+    };
+
+    try {
+        SyntaxAnalyzer::analyze(tokens);
+    } catch (const SyntaxError& e) {
+        EXPECT_EQ(e.position(), 2);
+    }
 }

@@ -11,8 +11,8 @@ namespace {
     };
 }
 
-TokenClass classify(Type type) {
-    switch (type) {
+TokenClass classify(Type t) {
+    switch (t) {
         case Type::INT:
         case Type::DOUBLE: return TokenClass::NUMBER;
 
@@ -25,7 +25,7 @@ TokenClass classify(Type type) {
         case Type::LEFTBRACKET: return TokenClass::LEFTBRACKET;
         case Type::RIGHTBRACKET: return TokenClass::RIGHTBRACKET;
 
-        default: throw std::invalid_argument("unknown type");
+        default: throw std::runtime_error("classify error");
     }
 }
 

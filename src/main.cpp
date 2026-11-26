@@ -1,4 +1,5 @@
 #include "Translator.hpp"
+#include "TranslatorError.hpp"
 #include <iostream>
 #include <exception>
 
@@ -19,6 +20,13 @@ int main() {
 
         try {
             std::cout << Translator::translate(str) << '\n';
+        }
+        catch (const TranslatorError& e) {
+            if (e.position() != std::string::npos) {
+                std::cout << str << '\n' << std::string(e.position(), ' ') << '^' << '\n';
+            }
+
+            std::cout << e.stage() << ": " << e.what() << '\n';
         }
         catch (const std::exception& e) {
             std::cerr << e.what() << '\n';

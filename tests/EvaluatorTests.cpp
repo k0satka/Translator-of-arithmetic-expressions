@@ -176,3 +176,33 @@ TEST(EvaluatorTests, EmptyInput) {
 
     EXPECT_THROW(Evaluator::evaluate(tokens), std::runtime_error);
 }
+
+TEST(EvaluatorTests, ErrorPosTest1) {
+    std::vector<Token> tokens = { 
+        {Type::INT, "5", 0},
+        {Type::INT, "0", 2},
+        {Type::DIVIDE, "/", 1},
+    };
+
+    try {
+        Evaluator::evaluate(tokens);
+    } catch (const EvaluatorError& e) {
+        EXPECT_EQ(e.position(), 1);
+    }
+}
+
+TEST(EvaluatorTests, ErrorPosTest2) {
+    std::vector<Token> tokens = { 
+        {Type::INT, "5", 0},
+        {Type::INT, "1", 3},
+        {Type::INT, "1", 5},
+        {Type::MINUS, "-", 4},
+        {Type::DIVIDE, "/", 1},
+    };
+
+    try {
+        Evaluator::evaluate(tokens);
+    } catch (const EvaluatorError& e) {
+        EXPECT_EQ(e.position(), 1);
+    }
+}

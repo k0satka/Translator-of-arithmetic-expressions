@@ -39,5 +39,3 @@ enum class Type { INT, DOUBLE, PLUS, MINUS, MULTIPLY, DIVIDE, LEFTBRACKET, RIGHT
 |     |              | LEFTBRACKET  | error                     | 2       |
 |     |              | NUMBER       | error                     | 2       |
 |     |              | END          | проверить стек на пустоту | 2       |
-
-<3

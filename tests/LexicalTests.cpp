@@ -97,3 +97,87 @@ TEST(LexicalAnalyzerTest, EmptyInput) {
 
     EXPECT_TRUE(tokens.empty());
 }
+
+TEST(LexicalTests, TokenPositions) {
+    auto tokens = LexicalAnalyzer::analyze("12 + (3.5)");
+
+    ASSERT_EQ(tokens.size(), 5);
+
+    EXPECT_EQ(tokens[0].pos, 0);
+    EXPECT_EQ(tokens[1].pos, 3);
+    EXPECT_EQ(tokens[2].pos, 5);
+    EXPECT_EQ(tokens[3].pos, 6);
+    EXPECT_EQ(tokens[4].pos, 9);
+}
+
+TEST(LexicalTests, TokenPositions2) {
+    auto tokens = LexicalAnalyzer::analyze("(.5+2)");
+
+    ASSERT_EQ(tokens.size(), 5);
+
+    EXPECT_EQ(tokens[0].pos, 0);
+    EXPECT_EQ(tokens[1].pos, 1);
+    EXPECT_EQ(tokens[2].pos, 3);
+    EXPECT_EQ(tokens[3].pos, 4);
+    EXPECT_EQ(tokens[4].pos, 5);
+}
+
+TEST(LexicalTests, TokenPositions3) {
+    auto tokens = LexicalAnalyzer::analyze("2^3");
+
+    ASSERT_EQ(tokens.size(), 3);
+
+    EXPECT_EQ(tokens[0].pos, 0);
+    EXPECT_EQ(tokens[1].pos, 1);
+    EXPECT_EQ(tokens[2].pos, 2);
+}
+
+TEST(LexicalTests, InvalidCharacterPosition) {
+    try {
+        LexicalAnalyzer::analyze("12@3");
+    }
+    catch (const LexicalError& e) {
+        EXPECT_EQ(e.position(), 2);
+        EXPECT_EQ(e.stage(), "LexicalError");
+    }
+}
+
+TEST(LexicalTests, Dot) {
+    try {
+        LexicalAnalyzer::analyze(".");
+    }
+    catch (const LexicalError& e) {
+        EXPECT_EQ(e.position(), 0);
+        EXPECT_EQ(e.stage(), "LexicalError");
+    }
+}
+
+TEST(LexicalTests, Dot2) {
+    try {
+        LexicalAnalyzer::analyze(".+2");
+    }
+    catch (const LexicalError& e) {
+        EXPECT_EQ(e.position(), 0);
+        EXPECT_EQ(e.stage(), "LexicalError");
+    }
+}
+
+TEST(LexicalTests, InvalidSimbol) {
+    try {
+        LexicalAnalyzer::analyze("1+#");
+    }
+    catch (const LexicalError& e) {
+        EXPECT_EQ(e.position(), 2);
+        EXPECT_EQ(e.stage(), "LexicalError");
+    }
+}
+
+TEST(LexicalTests, Dot3) {
+    try {
+        LexicalAnalyzer::analyze(". 5");
+    }
+    catch (const LexicalError& e) {
+        EXPECT_EQ(e.position(), 0);
+        EXPECT_EQ(e.stage(), "LexicalError");
+    }
+}

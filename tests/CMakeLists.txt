@@ -17,6 +17,7 @@ add_executable(translator_tests
     PostfixTests.cpp
     EvaluatorTests.cpp
     PipelineTests.cpp
+    TranslatorErrorTests.cpp
 )
 
 target_link_libraries(translator_tests PRIVATE

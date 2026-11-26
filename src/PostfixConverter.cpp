@@ -1,4 +1,5 @@
 #include "PostfixConverter.hpp"
+
 #include <stack>
 #include <stdexcept>
 
@@ -31,7 +32,7 @@ std::vector<Token> PostfixConverter::convert(const std::vector<Token>& tokens) {
         case TokenClass::LEFTBRACKET: stack.push(tokens[i]); break;
         case TokenClass::RIGHTBRACKET: 
             while (true) {
-                if (stack.empty()) throw std::runtime_error("missing an opening bracket");
+                if (stack.empty()) throw PostfixError("unexpected closing parenthesis", tokens[i].pos);
                 if (stack.top().type == Type::LEFTBRACKET) break;
                 res.push_back(stack.top());
                 stack.pop();
@@ -49,7 +50,7 @@ std::vector<Token> PostfixConverter::convert(const std::vector<Token>& tokens) {
 
         case TokenClass::END:
             while (!stack.empty()) {
-                if (stack.top().type == Type::LEFTBRACKET) throw std::runtime_error("extra opening bracket");
+                if (stack.top().type == Type::LEFTBRACKET) throw PostfixError("unclosed opening parenthesis", stack.top().pos);
                 res.push_back(stack.top());
                 stack.pop();
             }

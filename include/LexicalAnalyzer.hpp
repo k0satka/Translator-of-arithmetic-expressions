@@ -2,8 +2,8 @@
 
 #include <string>
 #include <vector>
-#include <stdexcept>
 #include "Token.hpp"
+#include "TranslatorError.hpp"
 
 //принимает предложение и возвращает набор токенов или ошибку через exc
 class LexicalAnalyzer {

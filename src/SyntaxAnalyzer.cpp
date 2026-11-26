@@ -1,4 +1,5 @@
 #include "SyntaxAnalyzer.hpp"
+
 #include <stack>
 #include <stdexcept>
 
@@ -49,9 +50,16 @@ void SyntaxAnalyzer::analyze(const std::vector<Token>& tokens) {
         switch (toDo.action) {
             case Action::NONE: break;
             case Action::PUSH: stack.push(tokens[i]); break;
-            case Action::POP: if (stack.empty()) throw std::runtime_error("syntax analysis error: extra parenthesis"); else stack.pop(); break;
-            case Action::CHECK_STACK: if (!stack.empty()) throw std::runtime_error("syntax analysis error: extra parenthesis"); break;
-            case Action::SEND_ERROR: throw std::runtime_error("syntax analysis error");
+            case Action::POP: if (stack.empty()) throw SyntaxError("unexpected closing parenthesis", tokens[i].pos); else stack.pop(); break;
+            case Action::CHECK_STACK: if (!stack.empty()) throw SyntaxError("unclosed opening parenthesis", stack.top().pos); break;
+            case Action::SEND_ERROR: 
+                if (state == State::EXP_OPERAND) {
+                    if (tokens.empty()) throw SyntaxError("expected operand", 0);
+                    if (i == len) throw SyntaxError("expected operand", tokens.back().pos == std::string::npos ? tokens.back().pos : tokens.back().pos + tokens.back().lex.size());
+                    throw SyntaxError("expected operand", tokens[i].pos);
+                }
+                else throw SyntaxError("expected operator", tokens[i].pos);
+                break;
             default: break;
         }
 

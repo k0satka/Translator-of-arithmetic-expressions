@@ -1,9 +1,8 @@
 #pragma once
 
 #include <vector>
-#include <stack>
-#include <stdexcept>
 #include "Token.hpp"
+#include "TranslatorError.hpp"
 
 class PostfixConverter {
     public:

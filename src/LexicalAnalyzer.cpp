@@ -1,5 +1,4 @@
 #include "LexicalAnalyzer.hpp"
-#include <stdexcept>
 
 namespace {
 //состояния КА
@@ -7,7 +6,7 @@ enum class State { START, INT, DOT, RPART, size };
 
 //КЛАССИФИКАЦИЯ СИМВОЛОВ (символ -> группа), потому что смысл некоторых символов для лекс. анализа одинаковый
 enum class SymbolClass { DIGIT, DOT, OPERATOR, LEFTBRACKET, RIGHTBRACKET, SPACE, END, INVALID, size };
-SymbolClass classify(char a) {
+SymbolClass classifyCh(char a) {
     if (a >= '0' && a <= '9') return SymbolClass::DIGIT;
     else if (a == '.') return SymbolClass::DOT;
     else if (a == '+' || a == '-' || a == '*' || a == '/' || a == '^') return SymbolClass::OPERATOR;
@@ -87,10 +86,10 @@ constexpr Cell table[static_cast<size_t>(State::size)][static_cast<size_t>(Symbo
 
 //конечный автомат
 std::vector<Token> LexicalAnalyzer::analyze(const std::string& str) {
-    
     std::vector<Token> res; //результат
     State state = State::START; //начальное состояние
     std::string lexem; //лексема для токена
+    size_t pos;
     SymbolClass sClass; //тип символа
 
     size_t len = str.size();
@@ -100,7 +99,7 @@ std::vector<Token> LexicalAnalyzer::analyze(const std::string& str) {
     while (i <= len) {
         if (i < len) {
             ch = str[i];
-            sClass = classify(ch);
+            sClass = classifyCh(ch);
         } else sClass = SymbolClass::END;
 
         Cell toDo = table[static_cast<size_t>(state)][static_cast<size_t>(sClass)];
@@ -108,12 +107,15 @@ std::vector<Token> LexicalAnalyzer::analyze(const std::string& str) {
         //выполняем действие
         switch (toDo.action) {
         case Action::NONE: break;
-        case Action::START_LEXEM: lexem = std::string(1, ch); break;
+        case Action::START_LEXEM: lexem = std::string(1, ch); pos = i; break;
         case Action::ADD_SIMB: lexem.push_back(ch); break;
-        case Action::SAVE_INT: res.emplace_back(Type::INT, lexem); break;
-        case Action::SAVE_DOUBLE: res.emplace_back(Type::DOUBLE, lexem); break;
-        case Action::SAVE_OPERATOR_BRACKET: res.emplace_back(getTokenType(ch), std::string(1, ch)); break;
-        case Action::SEND_ERROR: throw std::runtime_error("lexical analysis error");
+        case Action::SAVE_INT: res.emplace_back(Type::INT, lexem, pos); break;
+        case Action::SAVE_DOUBLE: res.emplace_back(Type::DOUBLE, lexem, pos); break;
+        case Action::SAVE_OPERATOR_BRACKET: res.emplace_back(getTokenType(ch), std::string(1, ch), i); break;
+        case Action::SEND_ERROR: {
+            if (sClass == SymbolClass::INVALID) throw LexicalError("invalid character: " + std::string(1, ch), i);
+            else throw LexicalError("incorrect number", pos);
+        }
         default: break;
         }
 
