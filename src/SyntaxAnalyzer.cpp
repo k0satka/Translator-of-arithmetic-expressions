@@ -45,6 +45,11 @@ void SyntaxAnalyzer::analyze(const std::vector<Token>& tokens) {
     while (i <= len) {
         tClass = i < len ? classify(tokens[i].type) : TokenClass::END;
 
+        //исключение из правил для унарных +-
+        if (i < len && state == State::EXP_OPERAND && (tokens[i].type == Type::PLUS || tokens[i].type == Type::MINUS)) {
+            continue;
+        }
+
         Cell toDo = table[static_cast<size_t>(state)][static_cast<size_t>(tClass)];
 
         switch (toDo.action) {

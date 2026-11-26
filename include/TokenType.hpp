@@ -3,8 +3,8 @@
 #include <stdexcept>
 
 //типы токенов
-enum class Type { PLUS, MINUS, MULTIPLY, DIVIDE, POW, INT, DOUBLE, LEFTBRACKET, RIGHTBRACKET, size };
-constexpr size_t OpCount = 5; //кол-во операторов
+enum class Type { PLUS, MINUS, MULTIPLY, DIVIDE, POW, UNARY_PLUS, UNARY_MINUS, INT, DOUBLE, LEFTBRACKET, RIGHTBRACKET, size };
+constexpr size_t OpCount = 7; //кол-во операторов
 
 //классификации токенов
 enum class TokenClass { NUMBER, OPERATOR, LEFTBRACKET, RIGHTBRACKET, END, size };
