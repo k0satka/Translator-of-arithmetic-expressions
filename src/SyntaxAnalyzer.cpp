@@ -47,6 +47,7 @@ void SyntaxAnalyzer::analyze(const std::vector<Token>& tokens) {
 
         //исключение из правил для унарных +-
         if (i < len && state == State::EXP_OPERAND && (tokens[i].type == Type::PLUS || tokens[i].type == Type::MINUS)) {
+            ++i;
             continue;
         }
 

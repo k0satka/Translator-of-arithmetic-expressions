@@ -15,7 +15,7 @@ double Evaluator::evaluate(const std::vector<Token>& tokens) {
                 try { 
                     size_t processed = 0; //сколько символов обработано
                     a = std::stod(tokens[i].lex, &processed); 
-                    if (processed != tokens[i].lex.size()) throw std::exception("stod error");
+                    if (processed != tokens[i].lex.size()) throw std::runtime_error("stod error");
                 }
                 catch (const std::exception& e) { throw EvaluatorError(std::string(e.what()), tokens[i].pos); }
                 stack.push(a);

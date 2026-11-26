@@ -179,3 +179,90 @@ TEST(SyntaxAnalyzerTest, ErrorPosTest5) {
         EXPECT_EQ(e.position(), 2);
     }
 }
+
+TEST(SyntaxAnalyzerTest, UnaryTest1) {
+    std::vector<Token> tokens = { 
+        {Type::PLUS, "+", 0},
+        {Type::INT, "1", 1},
+    };
+
+    EXPECT_NO_THROW(SyntaxAnalyzer::analyze(tokens));
+}
+
+TEST(SyntaxAnalyzerTest, UnaryTest2) {
+    std::vector<Token> tokens = { 
+        {Type::PLUS, "-", 0},
+        {Type::INT, "1", 1},
+    };
+
+    EXPECT_NO_THROW(SyntaxAnalyzer::analyze(tokens));
+}
+
+TEST(SyntaxAnalyzerTest, UnaryTest3) {
+    std::vector<Token> tokens = { 
+        {Type::PLUS, "+", 0},
+        {Type::PLUS, "+", 1},
+        {Type::INT, "1", 2},
+    };
+
+    EXPECT_NO_THROW(SyntaxAnalyzer::analyze(tokens));
+}
+
+TEST(SyntaxAnalyzerTest, UnaryTest4) {
+    std::vector<Token> tokens = { 
+        {Type::INT, "1", 0},
+        {Type::PLUS, "+", 1},
+        {Type::MINUS, "-", 2},
+        {Type::INT, "2", 3},
+    };
+
+    EXPECT_NO_THROW(SyntaxAnalyzer::analyze(tokens));
+}
+
+TEST(SyntaxAnalyzerTest, UnaryTest5) {
+    std::vector<Token> tokens = { 
+        {Type::INT, "1", 0},
+        {Type::MINUS, "-", 1},
+        {Type::MINUS, "-", 2},
+        {Type::INT, "2", 3},
+    };
+
+    EXPECT_NO_THROW(SyntaxAnalyzer::analyze(tokens));
+}
+
+TEST(SyntaxAnalyzerTest, UnaryTest6) {
+    std::vector<Token> tokens = { 
+        {Type::INT, "1", 0},
+        {Type::MULTIPLY, "*", 1},
+        {Type::MINUS, "-", 2},
+        {Type::INT, "2", 3},
+    };
+
+    EXPECT_NO_THROW(SyntaxAnalyzer::analyze(tokens));
+}
+
+TEST(SyntaxAnalyzerTest, UnaryTest7) {
+    std::vector<Token> tokens = { 
+        {Type::MINUS, "-", 0},
+        {Type::LEFTBRACKET, "(", 1},
+        {Type::INT, "1", 2},
+        {Type::MULTIPLY, "*", 3},
+        {Type::INT, "2", 4},
+        {Type::RIGHTBRACKET, ")", 5},
+    };
+
+    EXPECT_NO_THROW(SyntaxAnalyzer::analyze(tokens));
+}
+
+TEST(SyntaxAnalyzerTest, UnaryTest8) {
+    std::vector<Token> tokens = { 
+        {Type::INT, "1", 0},
+        {Type::POW, "^", 1},
+        {Type::MINUS, "-", 2},
+        {Type::INT, "2", 3},
+    };
+
+    EXPECT_NO_THROW(SyntaxAnalyzer::analyze(tokens));
+}
+
+//переписать везде под унарные
