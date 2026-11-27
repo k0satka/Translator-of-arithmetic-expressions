@@ -40,7 +40,20 @@ INSTANTIATE_TEST_SUITE_P(
         ExpressionCase{"2^3*2", 16.0},
         ExpressionCase{"4^0.5", 2.0},
         ExpressionCase{"5^0", 1.0},
-        ExpressionCase{"2^1+3", 5.0}
+        ExpressionCase{"2^1+3", 5.0},
+        ExpressionCase{"-5", -5.0},
+        ExpressionCase{"+4", 4.0},
+        ExpressionCase{"--4", 4.0},
+        ExpressionCase{"-+42", -42.0},
+        ExpressionCase{"4+-2", 2.0},
+        ExpressionCase{"4--2", 6.0},
+        ExpressionCase{"2*-4", -8.0},
+        ExpressionCase{"-(4+2)", -6.0},
+        ExpressionCase{"-2^2", -4.0},
+        ExpressionCase{"(-2)^2", 4.0},
+        ExpressionCase{"2^-3", 0.125},
+        ExpressionCase{"2^-3^2", 0.001953125},
+        ExpressionCase{"4*-(-2)", 8}
     )
 );
 
@@ -64,13 +77,11 @@ INSTANTIATE_TEST_SUITE_P(
     InvalidExpressionTest,
     testing::Values(
         "1+*2",
-        "1++2",
         "(1+2",
         "1+2)",
         "1 2",
         "12.3.4",
         "2(3+4)",
-        "-5+2",
         "()",
         ""
     )

@@ -14,7 +14,7 @@ TEST(TokenTypeTests, OperatorProperties) {
     EXPECT_EQ(multiply.arity, 2);
     EXPECT_EQ(multiply.associativity, Associativity::LEFT);
 
-    EXPECT_EQ(pow.priority, 3);
+    EXPECT_EQ(pow.priority, 4);
     EXPECT_EQ(pow.arity, 2);
     EXPECT_EQ(pow.associativity, Associativity::RIGHT);
 }

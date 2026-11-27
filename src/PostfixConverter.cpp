@@ -23,13 +23,14 @@ std::vector<Token> PostfixConverter::convert(const std::vector<Token>& tokens) {
     std::stack<Token> stack;
 
     size_t sz = tokens.size();
+    bool expOperand = true; //флаг для возможности унарных операторов
 
     for (size_t i = 0; i <= sz; i++) {
         TokenClass tClass = i < sz ? classify(tokens[i].type) : TokenClass::END;
 
         switch (tClass) {
-        case TokenClass::NUMBER: res.push_back(tokens[i]); break;
-        case TokenClass::LEFTBRACKET: stack.push(tokens[i]); break;
+        case TokenClass::NUMBER: res.push_back(tokens[i]); expOperand = false; break;
+        case TokenClass::LEFTBRACKET: stack.push(tokens[i]); expOperand = true; break;
         case TokenClass::RIGHTBRACKET: 
             while (true) {
                 if (stack.empty()) throw PostfixError("unexpected closing parenthesis", tokens[i].pos);
@@ -38,16 +39,29 @@ std::vector<Token> PostfixConverter::convert(const std::vector<Token>& tokens) {
                 stack.pop();
             }
             stack.pop();
+            expOperand = false;
             break;
 
-        case TokenClass::OPERATOR:
-            while (!stack.empty() && shouldPopOperator(stack.top().type, tokens[i].type)) {
-                res.push_back(stack.top());
-                stack.pop();
+        case TokenClass::OPERATOR: {
+            Token op = tokens[i];
+
+            //унарные плюс и минус относятся к операнду, поэтому перехватываем их тут
+            if (expOperand) {
+                if (op.type == Type::PLUS) { op.type = Type::UNARY_PLUS; stack.push(op); }
+                else if (op.type == Type::MINUS) { op.type = Type::UNARY_MINUS; stack.push(op); }
+                else throw PostfixError("expected operand", tokens[i].pos);
             }
-            stack.push(tokens[i]);
+            else {
+                while (!stack.empty() && shouldPopOperator(stack.top().type, tokens[i].type)) {
+                    res.push_back(stack.top());
+                    stack.pop();
+                }
+                stack.push(tokens[i]);
+            }
+            expOperand = true;
             break;
-
+        }
+        
         case TokenClass::END:
             while (!stack.empty()) {
                 if (stack.top().type == Type::LEFTBRACKET) throw PostfixError("unclosed opening parenthesis", stack.top().pos);

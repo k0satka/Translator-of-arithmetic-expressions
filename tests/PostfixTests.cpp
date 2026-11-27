@@ -170,7 +170,7 @@ TEST(PostfixConverterTests, PowTest) {
     EXPECT_EQ(tokens[4].lex, "^");
 }
 
-TEST(PostfixConverterTests, PowTest2) { //дописать
+TEST(PostfixConverterTests, PowTest2) {
     std::vector<Token> tokens = {
         {Type::LEFTBRACKET, "("},
         {Type::INT, "2"},
@@ -217,4 +217,174 @@ TEST(PostfixConverterTests, ErrorPosTest2) {
     } catch (const PostfixError& e) {
         EXPECT_EQ(e.position(), 1);
     }
+}
+
+TEST(PostfixConverterTests, UnaryTest1) {
+    std::vector<Token> tokens = {
+        {Type::MINUS, "-"},
+        {Type::INT, "1"},
+    };
+
+    tokens = PostfixConverter::convert(tokens);
+    ASSERT_EQ(tokens.size(), 2);
+
+    EXPECT_EQ(tokens[0].lex, "1");
+    EXPECT_EQ(tokens[1].lex, "-");
+    EXPECT_EQ(tokens[1].type, Type::UNARY_MINUS);
+}
+
+TEST(PostfixConverterTests, UnaryTest2) {
+    std::vector<Token> tokens = {
+        {Type::MINUS, "-"},
+        {Type::MINUS, "-"},
+        {Type::INT, "1"},
+    };
+
+    tokens = PostfixConverter::convert(tokens);
+    ASSERT_EQ(tokens.size(), 3);
+
+    EXPECT_EQ(tokens[0].lex, "1");
+    EXPECT_EQ(tokens[1].lex, "-");
+    EXPECT_EQ(tokens[2].lex, "-");
+    EXPECT_EQ(tokens[1].type, Type::UNARY_MINUS);
+    EXPECT_EQ(tokens[2].type, Type::UNARY_MINUS);
+}
+
+TEST(PostfixConverterTests, UnaryTest3) {
+    std::vector<Token> tokens = {
+        {Type::INT, "4"},
+        {Type::MULTIPLY, "*"},
+        {Type::MINUS, "-"},
+        {Type::INT, "2"},
+    };
+
+    tokens = PostfixConverter::convert(tokens);
+    ASSERT_EQ(tokens.size(), 4);
+
+    EXPECT_EQ(tokens[0].lex, "4");
+    EXPECT_EQ(tokens[1].lex, "2");
+    EXPECT_EQ(tokens[2].lex, "-");
+    EXPECT_EQ(tokens[3].lex, "*");
+    EXPECT_EQ(tokens[2].type, Type::UNARY_MINUS);
+}
+
+TEST(PostfixConverterTests, UnaryTest4) {
+    std::vector<Token> tokens = {
+        {Type::MINUS, "-"},
+        {Type::LEFTBRACKET, "("},
+        {Type::INT, "4"},
+        {Type::PLUS, "+"},
+        {Type::PLUS, "2"},
+        {Type::RIGHTBRACKET, ")"},
+    };
+
+    tokens = PostfixConverter::convert(tokens);
+    ASSERT_EQ(tokens.size(), 4);
+
+    EXPECT_EQ(tokens[0].lex, "4");
+    EXPECT_EQ(tokens[1].lex, "2");
+    EXPECT_EQ(tokens[2].lex, "+");
+    EXPECT_EQ(tokens[3].lex, "-");
+    EXPECT_EQ(tokens[3].type, Type::UNARY_MINUS);
+}
+
+TEST(PostfixConverterTests, UnaryTest5) {
+    std::vector<Token> tokens = {
+        {Type::MINUS, "-"},
+        {Type::INT, "4"},
+        {Type::POW, "^"},
+        {Type::INT, "2"},
+    };
+
+    tokens = PostfixConverter::convert(tokens);
+    ASSERT_EQ(tokens.size(), 4);
+
+    EXPECT_EQ(tokens[0].lex, "4");
+    EXPECT_EQ(tokens[1].lex, "2");
+    EXPECT_EQ(tokens[2].lex, "^");
+    EXPECT_EQ(tokens[3].lex, "-");
+    EXPECT_EQ(tokens[3].type, Type::UNARY_MINUS);
+}
+
+TEST(PostfixConverterTests, UnaryTest6) {
+    std::vector<Token> tokens = {
+        {Type::INT, "4"},
+        {Type::POW, "^"},
+        {Type::MINUS, "-"},
+        {Type::INT, "2"},
+    };
+
+    tokens = PostfixConverter::convert(tokens);
+    ASSERT_EQ(tokens.size(), 4);
+
+    EXPECT_EQ(tokens[0].lex, "4");
+    EXPECT_EQ(tokens[1].lex, "2");
+    EXPECT_EQ(tokens[2].lex, "-");
+    EXPECT_EQ(tokens[3].lex, "^");
+    EXPECT_EQ(tokens[2].type, Type::UNARY_MINUS);
+}
+
+TEST(PostfixConverterTests, UnaryTest7) {
+    std::vector<Token> tokens = {
+        {Type::LEFTBRACKET, "("},
+        {Type::MINUS, "-"},
+        {Type::INT, "2"},
+        {Type::RIGHTBRACKET, ")"},
+        {Type::POW, "^"},
+        {Type::INT, "4"},
+    };
+
+    tokens = PostfixConverter::convert(tokens);
+    ASSERT_EQ(tokens.size(), 4);
+
+    EXPECT_EQ(tokens[0].lex, "2");
+    EXPECT_EQ(tokens[1].lex, "-");
+    EXPECT_EQ(tokens[2].lex, "4");
+    EXPECT_EQ(tokens[3].lex, "^");
+    EXPECT_EQ(tokens[1].type, Type::UNARY_MINUS);
+}
+
+TEST(PostfixConverterTests, UnaryAndPow1) {
+    std::vector<Token> tokens = {
+        {Type::INT, "4"},
+        {Type::POW, "^"},
+        {Type::MINUS, "-"},
+        {Type::INT, "2"},
+        {Type::POW, "^"},
+        {Type::INT, "4"},
+    };
+
+    tokens = PostfixConverter::convert(tokens);
+    ASSERT_EQ(tokens.size(), 6);
+
+    EXPECT_EQ(tokens[0].lex, "4");
+    EXPECT_EQ(tokens[1].lex, "2");
+    EXPECT_EQ(tokens[2].lex, "4");
+    EXPECT_EQ(tokens[3].lex, "^");
+    EXPECT_EQ(tokens[4].lex, "-");
+    EXPECT_EQ(tokens[5].lex, "^");
+    EXPECT_EQ(tokens[4].type, Type::UNARY_MINUS);
+}
+
+TEST(PostfixConverterTests, UnaryTest8) {
+    std::vector<Token> tokens = {
+        {Type::INT, "4"},
+        {Type::MULTIPLY, "*"},
+        {Type::MINUS, "-"},
+        {Type::LEFTBRACKET, "("},
+        {Type::MINUS, "-"},
+        {Type::INT, "2"},
+        {Type::RIGHTBRACKET, ")"},
+    };
+
+    tokens = PostfixConverter::convert(tokens);
+    ASSERT_EQ(tokens.size(), 5);
+
+    EXPECT_EQ(tokens[0].lex, "4");
+    EXPECT_EQ(tokens[1].lex, "2");
+    EXPECT_EQ(tokens[2].lex, "-");
+    EXPECT_EQ(tokens[3].lex, "-");
+    EXPECT_EQ(tokens[4].lex, "*");
+    EXPECT_EQ(tokens[2].type, Type::UNARY_MINUS);
+    EXPECT_EQ(tokens[3].type, Type::UNARY_MINUS);
 }

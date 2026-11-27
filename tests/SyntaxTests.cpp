@@ -43,7 +43,7 @@ TEST(SyntaxAnalyzerTest, TwoOperators) {
         {Type::INT, "2"},
     };
 
-    EXPECT_THROW(SyntaxAnalyzer::analyze(tokens), std::runtime_error);    
+    EXPECT_NO_THROW(SyntaxAnalyzer::analyze(tokens));    
 }
 
 TEST(SyntaxAnalyzerTest, MissingOperand) {
