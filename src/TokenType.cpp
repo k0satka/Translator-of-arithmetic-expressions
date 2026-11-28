@@ -10,6 +10,7 @@ namespace {
         /*POW*/ {4, 2, Associativity::RIGHT},
         /*UNARY_PLUS*/ {3, 1, Associativity::RIGHT},
         /*UNARY_MINUS*/ {3, 1, Associativity::RIGHT},
+        /*ASSIGN*/ {0, 2, Associativity::RIGHT},
     };
 }
 
@@ -24,7 +25,10 @@ TokenClass classify(Type t) {
         case Type::POW:
         case Type::UNARY_MINUS:
         case Type::UNARY_PLUS:
+        case Type::ASSIGN:
         case Type::DIVIDE: return TokenClass::OPERATOR;
+
+        case Type::IDENTIFIER: return TokenClass::IDENTIFIER;
 
         case Type::LEFTBRACKET: return TokenClass::LEFTBRACKET;
         case Type::RIGHTBRACKET: return TokenClass::RIGHTBRACKET;

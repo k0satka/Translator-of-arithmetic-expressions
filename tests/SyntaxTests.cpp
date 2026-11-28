@@ -265,4 +265,34 @@ TEST(SyntaxAnalyzerTest, UnaryTest8) {
     EXPECT_NO_THROW(SyntaxAnalyzer::analyze(tokens));
 }
 
-//переписать везде под унарные
+TEST(SyntaxAnalyzerTest, IdentifierAndAssignTest) {
+    std::vector<Token> tokens = { 
+        {Type::IDENTIFIER, "x", 0},
+        {Type::ASSIGN, "=", 1},
+        {Type::INT, "2", 3},
+    };
+
+    EXPECT_NO_THROW(SyntaxAnalyzer::analyze(tokens));
+}
+
+TEST(SyntaxAnalyzerTest, AssignTest2) {
+    std::vector<Token> tokens = { 
+        {Type::IDENTIFIER, "1", 0},
+        {Type::ASSIGN, "=", 1},
+        {Type::INT, "2", 3},
+    };
+
+    EXPECT_NO_THROW(SyntaxAnalyzer::analyze(tokens));
+}
+
+TEST(SyntaxAnalyzerTest, IdentifierAssignTest3) {
+    std::vector<Token> tokens = { 
+        {Type::IDENTIFIER, "x", 0},
+        {Type::ASSIGN, "=", 1},
+        {Type::INT, "y", 3},
+        {Type::ASSIGN, "=", 1},
+        {Type::INT, "42", 1},
+    };
+
+    EXPECT_NO_THROW(SyntaxAnalyzer::analyze(tokens));
+}

@@ -388,3 +388,22 @@ TEST(PostfixConverterTests, UnaryTest8) {
     EXPECT_EQ(tokens[2].type, Type::UNARY_MINUS);
     EXPECT_EQ(tokens[3].type, Type::UNARY_MINUS);
 }
+
+TEST(PostfixConverterTests, IdentifierAndAssign) {
+    std::vector<Token> tokens = { 
+        {Type::IDENTIFIER, "x"},
+        {Type::ASSIGN, "="},
+        {Type::INT, "y"},
+        {Type::ASSIGN, "="},
+        {Type::INT, "42"},
+    };
+
+    tokens = PostfixConverter::convert(tokens);
+    ASSERT_EQ(tokens.size(), 5);
+
+    EXPECT_EQ(tokens[0].lex, "x");
+    EXPECT_EQ(tokens[1].lex, "y");
+    EXPECT_EQ(tokens[2].lex, "42");
+    EXPECT_EQ(tokens[3].lex, "=");
+    EXPECT_EQ(tokens[4].lex, "=");
+}

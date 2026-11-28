@@ -2,14 +2,15 @@
 
 namespace {
 //состояния КА
-enum class State { START, INT, DOT, RPART, size }; 
+enum class State { START, INT, DOT, RPART, IDENTIFIER, size }; 
 
 //КЛАССИФИКАЦИЯ СИМВОЛОВ (символ -> группа), потому что смысл некоторых символов для лекс. анализа одинаковый
-enum class SymbolClass { DIGIT, DOT, OPERATOR, LEFTBRACKET, RIGHTBRACKET, SPACE, END, INVALID, size };
+enum class SymbolClass { DIGIT, DOT, OPERATOR, ABC, LEFTBRACKET, RIGHTBRACKET, SPACE, END, INVALID, size };
 SymbolClass classifyCh(char a) {
     if (a >= '0' && a <= '9') return SymbolClass::DIGIT;
     else if (a == '.') return SymbolClass::DOT;
-    else if (a == '+' || a == '-' || a == '*' || a == '/' || a == '^') return SymbolClass::OPERATOR;
+    else if (a == '+' || a == '-' || a == '*' || a == '/' || a == '^' || a == '=') return SymbolClass::OPERATOR;
+    else if ((a >= 'a' && a <= 'z') || (a >= 'A' && a <= 'Z') || a == '_') return SymbolClass::ABC;
     else if (a == '(') return SymbolClass::LEFTBRACKET;
     else if (a == ')') return SymbolClass::RIGHTBRACKET;
     else if (a == ' ' || a == '\n' || a == '\t') return SymbolClass::SPACE;
@@ -17,7 +18,7 @@ SymbolClass classifyCh(char a) {
 }
 
 //возможные действия
-enum class Action { NONE, START_LEXEM, ADD_SIMB, SAVE_INT, SAVE_DOUBLE, SAVE_OPERATOR_BRACKET, SEND_ERROR, size };
+enum class Action { NONE, START_LEXEM, ADD_SIMB, SAVE_INT, SAVE_DOUBLE, SAVE_OPERATOR_BRACKET, SAVE_IDENTIFIER, SEND_ERROR, size };
 //нужна вспомогательная функ потому что теряем информацию о символе разбивая их на типы, не понятно какой тип указывать при сохранении токена действием SAVE_OPERATOR_BRACKET
 Type getTokenType(char a){
     switch (a) {
@@ -26,9 +27,10 @@ Type getTokenType(char a){
     case '*': return Type::MULTIPLY;
     case '/': return Type::DIVIDE;
     case '^': return Type::POW;
+    case '=': return Type::ASSIGN;
     case '(': return Type::LEFTBRACKET;
     case ')': return Type::RIGHTBRACKET;
-    default: throw std::invalid_argument("processed only +-*/()");
+    default: throw std::invalid_argument("processed only +-*/^()");
     }
 }   
 
@@ -44,6 +46,7 @@ constexpr Cell table[static_cast<size_t>(State::size)][static_cast<size_t>(Symbo
         { State::INT, Action::START_LEXEM }, //digit
         { State::DOT, Action::START_LEXEM }, //dot
         { State::START, Action::SAVE_OPERATOR_BRACKET }, //operator
+        { State::IDENTIFIER, Action::START_LEXEM }, //abc
         { State::START, Action::SAVE_OPERATOR_BRACKET }, //lBracket
         { State::START, Action::SAVE_OPERATOR_BRACKET }, //rBracket
         { State::START, Action::NONE }, //space
@@ -54,6 +57,7 @@ constexpr Cell table[static_cast<size_t>(State::size)][static_cast<size_t>(Symbo
         { State::INT, Action::ADD_SIMB }, //digit
         { State::RPART, Action::ADD_SIMB }, //dot
         { State::START, Action::SAVE_INT, false }, //operator. для двойной обработки consume = false
+        { State::START, Action::SEND_ERROR }, //abc
         { State::START, Action::SAVE_INT, false }, //lBracket
         { State::START, Action::SAVE_INT, false }, //rBracket
         { State::START, Action::SAVE_INT }, //space
@@ -64,6 +68,7 @@ constexpr Cell table[static_cast<size_t>(State::size)][static_cast<size_t>(Symbo
         { State::RPART, Action::ADD_SIMB }, //digit
         { State::START, Action::SEND_ERROR }, //dot
         { State::START, Action::SEND_ERROR }, //operator
+        { State::START, Action::SEND_ERROR }, //abc
         { State::START, Action::SEND_ERROR }, //lBracket
         { State::START, Action::SEND_ERROR }, //rBracket
         { State::START, Action::SEND_ERROR }, //space
@@ -74,10 +79,22 @@ constexpr Cell table[static_cast<size_t>(State::size)][static_cast<size_t>(Symbo
         { State::RPART, Action::ADD_SIMB }, //digit
         { State::START, Action::SAVE_DOUBLE, false }, //dot
         { State::START, Action::SAVE_DOUBLE, false }, //operator
+        { State::START, Action::SEND_ERROR }, //abc
         { State::START, Action::SAVE_DOUBLE, false }, //lBracket
         { State::START, Action::SAVE_DOUBLE, false }, //rBracket
         { State::START, Action::SAVE_DOUBLE }, //space
         { State::START, Action::SAVE_DOUBLE }, //end
+        { State::START, Action::SEND_ERROR }, //invalid
+    },
+    /*IDENTIFIER*/{
+        { State::IDENTIFIER, Action::ADD_SIMB }, //digit
+        { State::START, Action::SEND_ERROR }, //dot
+        { State::START, Action::SAVE_IDENTIFIER, false }, //operator
+        { State::IDENTIFIER, Action::ADD_SIMB }, //abc
+        { State::START, Action::SAVE_IDENTIFIER, false }, //lBracket
+        { State::START, Action::SAVE_IDENTIFIER, false }, //rBracket
+        { State::START, Action::SAVE_IDENTIFIER }, //space
+        { State::START, Action::SAVE_IDENTIFIER }, //end
         { State::START, Action::SEND_ERROR }, //invalid
     }
 };
@@ -112,9 +129,13 @@ std::vector<Token> LexicalAnalyzer::analyze(const std::string& str) {
         case Action::SAVE_INT: res.emplace_back(Type::INT, lexem, pos); break;
         case Action::SAVE_DOUBLE: res.emplace_back(Type::DOUBLE, lexem, pos); break;
         case Action::SAVE_OPERATOR_BRACKET: res.emplace_back(getTokenType(ch), std::string(1, ch), i); break;
+        case Action::SAVE_IDENTIFIER: res.emplace_back(Type::IDENTIFIER, lexem, pos); break;
         case Action::SEND_ERROR: {
-            if (sClass == SymbolClass::INVALID) throw LexicalError("invalid character: " + std::string(1, ch), i);
-            else throw LexicalError("incorrect number", pos);
+            if (sClass == SymbolClass::INVALID) throw LexicalError("invalid character", i);
+            else if (state == State::DOT) throw LexicalError("expected digit", pos);
+            else if (state == State::INT || state == State::RPART) throw LexicalError("unexpected letter after number", pos);
+            else if (state == State::IDENTIFIER) throw LexicalError("unexpected letter after identifier", pos);
+            else throw LexicalError("invalid letter", i);
         }
         default: break;
         }

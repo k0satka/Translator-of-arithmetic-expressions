@@ -4,6 +4,8 @@
 #include <exception>
 
 int main() {
+    Translator translator;
+
     std::string str;
 
     std::cout << "Translator of arithmetic expressions.\n";
@@ -19,7 +21,7 @@ int main() {
         if (str.empty()) continue;
 
         try {
-            std::cout << Translator::translate(str) << '\n';
+            std::cout << translator.translate(str) << '\n';
         }
         catch (const TranslatorError& e) {
             if (e.position() != std::string::npos) {

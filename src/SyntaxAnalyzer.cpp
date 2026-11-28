@@ -20,6 +20,7 @@ constexpr Cell table[static_cast<size_t>(State::size)][static_cast<size_t>(Token
     /*EXP_OPERAND*/{
         {State::EXP_OPERATOR, Action::NONE}, //number
         {State::EXP_OPERAND, Action::SEND_ERROR}, //operator
+        {State::EXP_OPERATOR, Action::NONE}, //identifier
         {State::EXP_OPERAND, Action::PUSH}, //leftbracket
         {State::EXP_OPERAND, Action::SEND_ERROR}, //rightbracket
         {State::EXP_OPERAND, Action::SEND_ERROR}, //end
@@ -27,6 +28,7 @@ constexpr Cell table[static_cast<size_t>(State::size)][static_cast<size_t>(Token
     /*EXP_OPERATOR*/{
         {State::EXP_OPERATOR, Action::SEND_ERROR}, //number
         {State::EXP_OPERAND, Action::NONE}, //operator
+        {State::EXP_OPERATOR, Action::SEND_ERROR}, //identifier
         {State::EXP_OPERATOR, Action::SEND_ERROR}, //leftbracket
         {State::EXP_OPERATOR, Action::POP}, //rightbracket
         {State::EXP_OPERATOR, Action::CHECK_STACK}, //end

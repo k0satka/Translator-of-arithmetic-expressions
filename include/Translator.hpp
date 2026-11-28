@@ -8,6 +8,9 @@
 #include "Evaluator.hpp"
 
 class Translator {
+private:
+    //быстрый словарь для переменных на базе хеш таблицы
+    std::unordered_map<std::string, double> variables;
 public:
-    static double translate(const std::string& str);
+    double translate(const std::string& str);
 };

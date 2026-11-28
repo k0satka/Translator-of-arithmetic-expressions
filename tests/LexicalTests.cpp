@@ -181,3 +181,85 @@ TEST(LexicalTests, Dot3) {
         EXPECT_EQ(e.stage(), "LexicalError");
     }
 }
+
+TEST(LexicalTests, Dot4) {
+    try {
+        LexicalAnalyzer::analyze(".#");
+    }
+    catch (const LexicalError& e) {
+        EXPECT_EQ(e.position(), 1);
+        EXPECT_EQ(e.stage(), "LexicalError");
+    }
+}
+
+TEST(LexicalAnalyzerTest, Identifier1) {
+    auto tokens = LexicalAnalyzer::analyze("x");
+
+    ASSERT_EQ(tokens.size(), 1);
+
+    EXPECT_EQ(tokens[0].type, Type::IDENTIFIER);
+    EXPECT_EQ(tokens[0].lex, "x");
+    EXPECT_EQ(tokens[0].pos, 0);
+}
+
+TEST(LexicalAnalyzerTest, Identifier2) {
+    auto tokens = LexicalAnalyzer::analyze("abcd");
+
+    ASSERT_EQ(tokens.size(), 1);
+
+    EXPECT_EQ(tokens[0].type, Type::IDENTIFIER);
+    EXPECT_EQ(tokens[0].lex, "abcd");
+    EXPECT_EQ(tokens[0].pos, 0);
+}
+
+TEST(LexicalAnalyzerTest, Identifier3) {
+    auto tokens = LexicalAnalyzer::analyze("ab12");
+
+    ASSERT_EQ(tokens.size(), 1);
+
+    EXPECT_EQ(tokens[0].type, Type::IDENTIFIER);
+    EXPECT_EQ(tokens[0].lex, "ab12");
+    EXPECT_EQ(tokens[0].pos, 0);
+}
+
+TEST(LexicalAnalyzerTest, Identifier4) {
+    auto tokens = LexicalAnalyzer::analyze("_ab12");
+
+    ASSERT_EQ(tokens.size(), 1);
+
+    EXPECT_EQ(tokens[0].type, Type::IDENTIFIER);
+    EXPECT_EQ(tokens[0].lex, "_ab12");
+    EXPECT_EQ(tokens[0].pos, 0);
+}
+
+TEST(LexicalAnalyzerTest, Identifier5) {
+    auto tokens = LexicalAnalyzer::analyze("x+42");
+
+    ASSERT_EQ(tokens.size(), 3);
+
+    EXPECT_EQ(tokens[0].type, Type::IDENTIFIER);
+    EXPECT_EQ(tokens[0].lex, "x");
+    EXPECT_EQ(tokens[0].pos, 0);
+    EXPECT_EQ(tokens[1].type, Type::PLUS);
+    EXPECT_EQ(tokens[1].lex, "+");
+    EXPECT_EQ(tokens[1].pos, 1);
+    EXPECT_EQ(tokens[2].type, Type::INT);
+    EXPECT_EQ(tokens[2].lex, "42");
+    EXPECT_EQ(tokens[2].pos, 2);
+}
+
+TEST(LexicalAnalyzerTest, IdentifierAndAssign) {
+    auto tokens = LexicalAnalyzer::analyze("x=42");
+
+    ASSERT_EQ(tokens.size(), 3);
+
+    EXPECT_EQ(tokens[0].type, Type::IDENTIFIER);
+    EXPECT_EQ(tokens[0].lex, "x");
+    EXPECT_EQ(tokens[0].pos, 0);
+    EXPECT_EQ(tokens[1].type, Type::ASSIGN);
+    EXPECT_EQ(tokens[1].lex, "=");
+    EXPECT_EQ(tokens[1].pos, 1);
+    EXPECT_EQ(tokens[2].type, Type::INT);
+    EXPECT_EQ(tokens[2].lex, "42");
+    EXPECT_EQ(tokens[2].pos, 2);
+}

@@ -8,7 +8,7 @@ struct ExpressionCase {
 
 class PipelineTests : public ::testing::TestWithParam<ExpressionCase> {};
 
-TEST_P(PipelineTests, CorrectResult) {
+TEST_P(PipelineTests, CorrectResult) { //дописать с новым транслятором
     const ExpressionCase& testCase = GetParam();
 
     EXPECT_DOUBLE_EQ(Translator::translate(testCase.expression), testCase.expected);

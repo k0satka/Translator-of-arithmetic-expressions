@@ -10,5 +10,5 @@ double Translator::translate(const std::string& str) {
     std::vector<Token> tokens = LexicalAnalyzer::analyze(str);
     SyntaxAnalyzer::analyze(tokens);
     tokens = PostfixConverter::convert(tokens);
-    return Evaluator::evaluate(tokens);
+    return Evaluator::evaluate(tokens, variables);
 }

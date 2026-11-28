@@ -30,6 +30,7 @@ std::vector<Token> PostfixConverter::convert(const std::vector<Token>& tokens) {
 
         switch (tClass) {
         case TokenClass::NUMBER: res.push_back(tokens[i]); expOperand = false; break;
+        case TokenClass::IDENTIFIER: res.push_back(tokens[i]); expOperand = false; break;
         case TokenClass::LEFTBRACKET: stack.push(tokens[i]); expOperand = true; break;
         case TokenClass::RIGHTBRACKET: 
             while (true) {

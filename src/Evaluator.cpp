@@ -3,9 +3,21 @@
 #include <stack>
 #include <stdexcept>
 #include <cmath>
+#include <variant>
 
-double Evaluator::evaluate(const std::vector<Token>& tokens) {
-    std::stack<double> stack;
+namespace {
+    double resolveValue(const std::variant<double, Token>& value, const std::unordered_map<std::string, double>& variables) {
+        return 0.0;
+        /*Если внутри Value хранится double, вернуть его.
+        Если хранится Token, найти token.lex в таблице переменных.
+        Если переменная существует, вернуть её значение.
+        Если переменная неизвестна, выбросить EvaluatorError с token.pos.*/
+    }
+}
+
+double Evaluator::evaluate(const std::vector<Token>& tokens, std::unordered_map<std::string, double>& variables) {
+    //стек хранит либо число, либо токен если это identifier. Хранит не только имя identifier, чтобы сохранить позицию для ошибок.
+    std::stack<std::variant<double, Token>> stack;
 
     size_t sz = tokens.size();
     for (size_t i = 0; i < sz; i++) {

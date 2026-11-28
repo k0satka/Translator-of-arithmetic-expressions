@@ -3,11 +3,11 @@
 #include <stdexcept>
 
 //типы токенов
-enum class Type { PLUS, MINUS, MULTIPLY, DIVIDE, POW, UNARY_PLUS, UNARY_MINUS, INT, DOUBLE, LEFTBRACKET, RIGHTBRACKET, size };
-constexpr size_t OpCount = 7; //кол-во операторов
+enum class Type { PLUS, MINUS, MULTIPLY, DIVIDE, POW, UNARY_PLUS, UNARY_MINUS, ASSIGN, INT, DOUBLE, IDENTIFIER, LEFTBRACKET, RIGHTBRACKET, size };
+constexpr size_t OpCount = 8; //кол-во операторов
 
 //классификации токенов
-enum class TokenClass { NUMBER, OPERATOR, LEFTBRACKET, RIGHTBRACKET, END, size };
+enum class TokenClass { NUMBER, OPERATOR, IDENTIFIER, LEFTBRACKET, RIGHTBRACKET, END, size };
 TokenClass classify(Type type);
 
 //информация об операторе

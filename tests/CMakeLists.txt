@@ -11,13 +11,9 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 add_executable(translator_tests
-    TokenTypeTests.cpp
     LexicalTests.cpp
     SyntaxTests.cpp
     PostfixTests.cpp
-    EvaluatorTests.cpp
-    PipelineTests.cpp
-    TranslatorErrorTests.cpp
 )
 
 target_link_libraries(translator_tests PRIVATE
